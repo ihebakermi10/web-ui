@@ -1,80 +1,73 @@
-// components/Sidebar.tsx
-
-import { useEffect } from "react";
+import { ChevronRight, Plus, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useConversationStore } from "../store/useConversationStore";
 import { v4 as uuidv4 } from "uuid";
 
 export default function Sidebar() {
-  // Récupération des fonctions et données du store (gestion d'état)
   const {
     conversations,
     addConversation,
     setCurrentConversation,
-    currentConversationId,
-    deleteConversation,
+    currentConversation,
+    deleteConversation
   } = useConversationStore();
 
-  // Vous pouvez ajouter ici une logique pour charger l'historique des conversations depuis localStorage
-
-  // Fonction pour créer une nouvelle conversation
   const handleNewConversation = () => {
     const newConv = {
-      id: uuidv4(),      // Génère un identifiant unique pour la conversation
-      messages: [],      // Initialise avec aucune message
-      model: "GPT-3.5"   // Modèle d'IA par défaut
+      id: uuidv4(),
+      messages: [],
+      model: "GPT-4",
+      createdAt: Date.now()
     };
     addConversation(newConv);
   };
 
-  // Exemple de gestion du changement de modèle (vous pouvez étendre cette fonctionnalité)
-  const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>, convId: string) => {
-    // Ici, vous pourriez envoyer une requête à votre backend pour changer le modèle
-    // ou mettre à jour localement la conversation
-    console.log(`Changer le modèle de la conversation ${convId} en ${e.target.value}`);
-  };
-
   return (
-    <div className="w-72 border-r dark:border-gray-700 p-4 overflow-y-auto">
-      <button
-        onClick={handleNewConversation}
-        className="w-full mb-4 p-2 bg-green-500 text-white rounded"
-      >
-        Nouvelle conversation
-      </button>
-      <ul>
-        {conversations.map((conv) => (
-          <li
-            key={conv.id}
-            className={`p-2 mb-2 rounded cursor-pointer ${
-              conv.id === currentConversationId
-                ? "bg-blue-200 dark:bg-blue-600"
-                : "hover:bg-gray-100 dark:hover:bg-gray-800"
-            }`}
-            onClick={() => setCurrentConversation(conv.id)}
-          >
-            <div className="flex justify-between items-center">
-              <span>Conversation {conv.id.substring(0, 5)}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();  // Évite que le clic sur supprimer déclenche la sélection de la conversation
-                  deleteConversation(conv.id);
-                }}
-                className="text-red-500"
+    <motion.div
+      initial={{ x: -300 }}
+      animate={{ x: 0 }}
+      className="w-80 h-screen flex flex-col bg-gray-900 border-r border-white/10"
+    >
+      <div className="p-4 space-y-4">
+        <button
+          onClick={handleNewConversation}
+          className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-all"
+        >
+          <Plus size={18} className="text-white" />
+          <span className="text-white">New chat</span>
+        </button>
+
+        <div className="border-t border-white/10 pt-4">
+          <h3 className="px-3 text-sm text-gray-400 mb-2">Previous chats</h3>
+          <div className="space-y-1">
+            {conversations.map((conv) => (
+              <div
+                key={conv.id}
+                onClick={() => setCurrentConversation(conv.id)}
+                className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all
+                  ${conv.id === currentConversation?.id ? 'bg-white/10' : 'hover:bg-white/5'}`}
               >
-                Supprimer
-              </button>
-            </div>
-            <select
-              value={conv.model}
-              onChange={(e) => handleModelChange(e, conv.id)}
-              className="mt-2 w-full p-1 border rounded"
-            >
-              <option value="GPT-3.5">GPT-3.5</option>
-              <option value="GPT-4">GPT-4</option>
-            </select>
-          </li>
-        ))}
-      </ul>
-    </div>
+                <div className="flex items-center gap-2">
+                  <ChevronRight size={16} className="text-gray-400" />
+                  <span className="text-white truncate">
+                    {conv.messages[0]?.text.substring(0, 24) || "New Chat"}
+                  </span>
+                </div>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteConversation(conv.id);
+                  }}
+                  className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

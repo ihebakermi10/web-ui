@@ -1,8 +1,58 @@
-/* styles/globals.css */
-
-/* Importation des styles de base de Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Vous pouvez ajouter vos styles globaux ici */
+:root {
+  --primary: #10a37f;
+  --primary-hover: #0d8a6d;
+  --secondary: #343541;
+  --background: #ffffff;
+  --text-primary: #2d333a;
+}
+
+.dark {
+  --background: #343541;
+  --secondary: #202123;
+  --text-primary: #ececf1;
+}
+
+@layer components {
+  .gradient-header {
+    @apply absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-gray-900 to-transparent opacity-10;
+  }
+  
+  .message-bubble {
+    @apply max-w-3xl px-4 py-3 rounded-[26px] shadow-sm;
+  }
+  
+  .typing-indicator span {
+    animation: bounce 1.4s infinite ease-in-out;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+}
+
+/* Styles personnalisés */
+.cl-border {
+  border-radius: 12px;
+}
+
+.cl-border-full {
+  border-radius: 24px;
+}
+
+.chat-container {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0),
+    radial-gradient(circle at 100% 1px, rgba(255,255,255,0.1) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+.dark .chat-container {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0),
+    radial-gradient(circle at 100% 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+}

@@ -1,6 +1,4 @@
-// firebase.ts
-
-// Importez les fonctions nécessaires depuis le SDK Firebase
+// lib/firebase.ts
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
@@ -8,7 +6,6 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getFunctions } from "firebase/functions";
 
-// Votre configuration Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDWSMVxdZoN3Z6qZcifpr4k3aCJRXMcAQA",
   authDomain: "chatbot-4b0a9.firebaseapp.com",
@@ -19,10 +16,8 @@ const firebaseConfig = {
   measurementId: "G-5TB6DLXVCB"
 };
 
-// Initialisez l'application Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialisez les différents services Firebase
 let analytics;
 try {
   analytics = getAnalytics(app);
@@ -34,9 +29,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const functions = getFunctions(app);
-
-// Créez l'instance du fournisseur Google pour l'authentification
 const googleProvider = new GoogleAuthProvider();
 
-// Exportez les services pour pouvoir les utiliser ailleurs
 export { app, analytics, auth, db, storage, functions, googleProvider };

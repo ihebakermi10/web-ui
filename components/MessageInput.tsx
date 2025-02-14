@@ -1,35 +1,21 @@
-// components/MessageInput.tsx
+import { motion } from "framer-motion";
+import { SendHorizonal } from "lucide-react";
 
-import { useState } from "react";
-
-interface MessageInputProps {
-  onSend: (text: string) => void;
-}
-
-export default function MessageInput({ onSend }: MessageInputProps) {
-  const [text, setText] = useState("");
-
-  // Gère la soumission du message
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (text.trim()) {
-      onSend(text);
-      setText("");
-    }
-  };
-
+export default function MessageInput() {
   return (
-    <form onSubmit={handleSubmit} className="mt-4 flex space-x-2">
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        className="flex-1 p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
-        placeholder="Tapez votre message..."
+    <div className="relative bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10">
+      <textarea
+        rows={1}
+        className="w-full px-6 py-4 bg-transparent resize-none outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500 text-white"
+        placeholder="Message ChatGPT..."
       />
-      <button type="submit" className="p-2 bg-blue-500 text-white rounded">
-        Envoyer
-      </button>
-    </form>
+      
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        className="absolute right-3 top-3 p-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all"
+      >
+        <SendHorizonal className="w-5 h-5 text-white" />
+      </motion.button>
+    </div>
   );
 }

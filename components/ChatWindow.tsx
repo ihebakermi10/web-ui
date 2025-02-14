@@ -1,59 +1,33 @@
-// components/ChatWindow.tsx
-
-import { useState } from "react";
-import { useConversationStore } from "../store/useConversationStore";
+import { motion, AnimatePresence } from "framer-motion";
 import ChatBubble from "./ChatBubble";
-import MessageInput from "../components/MessageInput";
-
-import { motion } from "framer-motion";
+import MessageInput from "./MessageInput";
+import { useConversationStore } from "../store/useConversationStore";
 
 export default function ChatWindow() {
-  const { conversations, currentConversationId, updateConversation } = useConversationStore();
-  // Récupère la conversation actuellement sélectionnée
-  const currentConversation = conversations.find(
-    (conv) => conv.id === currentConversationId
-  );
-  const [isTyping, setIsTyping] = useState(false);
-
-  // Fonction pour envoyer un message
-  const sendMessage = async (text: string) => {
-    if (!currentConversationId) return;
-    // Ajoute le message de l'utilisateur à la conversation
-    updateConversation(currentConversationId, {
-      id: Date.now().toString(),
-      sender: "user",
-      text,
-    });
-    setIsTyping(true);
-
-    // Simulation d'appel à une API pour obtenir une réponse du bot
-    setTimeout(() => {
-      updateConversation(currentConversationId, {
-        id: Date.now().toString(),
-        sender: "bot",
-        text: "Ceci est une réponse générée par le bot.",
-      });
-      setIsTyping(false);
-    }, 1500);
-  };
+  const { currentConversation } = useConversationStore();
 
   return (
-    <div className="flex flex-col flex-1 p-4 overflow-y-auto">
-      <div className="flex-1">
-        {currentConversation?.messages.map((msg) => (
-          <ChatBubble key={msg.id} message={msg} />
-        ))}
-        {isTyping && (
-          <motion.div
-            className="text-gray-500 italic"
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-          >
-            typing...
-          </motion.div>
-        )}
+    <div className="flex-1 flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <AnimatePresence>
+          {currentConversation?.messages.map((message, index) => (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <ChatBubble message={message} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
-      <MessageInput onSend={sendMessage} />
+      
+      <div className="sticky bottom-0 bg-gradient-to-b from-transparent via-white/90 to-white/90 dark:via-gray-900/90 dark:to-gray-900/90 pt-8 pb-8 px-6">
+        <div className="max-w-3xl mx-auto">
+          <MessageInput />
+        </div>
+      </div>
     </div>
   );
 }

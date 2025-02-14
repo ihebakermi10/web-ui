@@ -1,38 +1,45 @@
-// pages/_app.tsx
-
-import "../styles/globals.css"; // Importation des styles globaux
+import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  // Gestion d'un thème simple (dark / light)
+function MyApp({ Component, pageProps, router }: AppProps) {
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    // Récupère le thème sauvegardé ou définit light par défaut
-    const storedTheme = localStorage.getItem("theme") || "light";
-    setTheme(storedTheme);
-    document.documentElement.classList.toggle("dark", storedTheme === "dark");
+    const savedTheme = localStorage.getItem("theme") || 
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
   }, []);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-    localStorage.setItem("theme", newTheme);
     setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
   return (
-    <div className={`${theme}`}>
-      {/* Bouton pour changer le thème */}
+    <div className={`min-h-screen ${theme}`}>
       <button
         onClick={toggleTheme}
-        className="fixed top-4 right-4 p-2 bg-gray-200 dark:bg-gray-700 rounded"
+        className="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition z-50"
       >
-        {theme === "light" ? "Dark Mode" : "Light Mode"}
+        {theme === "light" ? "🌙" : "☀️"}
       </button>
-      {/* Affiche la page demandée */}
-      <Component {...pageProps} />
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={router.route}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Component {...pageProps} />
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
